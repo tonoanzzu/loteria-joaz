@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <loteria-joaz casillas=null></loteria-joaz>
+    <loteria-joaz casillas></loteria-joaz>
 </body>
 <script>
     class LoteriaGame extends HTMLElement {
@@ -18,10 +18,6 @@
             let shadowRoot = this.attachShadow({
                 mode: 'open'
             });
-        }
-
-        disconnectedCallback() {
-            console.log('disconnected!');
         }
 
         attributeChangedCallback(name, oldVal, newVal) {
