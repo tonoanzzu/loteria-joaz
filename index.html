@@ -14,23 +14,33 @@
 <script>
     class LoteriaGame extends HTMLElement {
 
-        connectedCallback() {
-            let shadowRoot = this.attachShadow({
-                mode: 'open'
-            });
-        }
-
         attributeChangedCallback(name, oldVal, newVal) {
 
-            this.shadowRoot.innerHTML = ''
-                //declaracion del shadow root
-            let noCasillas = newVal;
+            if (!this.shadowRoott) {
+                this.shadowRoott = this.attachShadow({
+                    mode: 'open'
+                });
+            }
+
+            let noCasillas
+
+            if (localStorage.getItem("casillas") === null) {
+                localStorage.setItem("casillas", 3);
+            }
+
+            noCasillas = newVal === null || newVal === '' ? localStorage.getItem("casillas") : newVal
+
+            localStorage.setItem("casillas", noCasillas);
+
+            this.shadowRoott.innerHTML = ''
+
             let ganador
             if (noCasillas > 1) {
                 ganador = Math.round(Math.random() * (noCasillas - 1) + 1);
             } else {
                 ganador = 1
             }
+            console.log(ganador);
 
             let botones = [];
             let contenido = document.createElement('div');
@@ -38,7 +48,7 @@
             if (noCasillas != null) {
                 for (let j = 1; j <= noCasillas; j++) {
                     let virtualBtn = document.createElement('button');
-                    virtualBtn.innerHTML = '';
+                    virtualBtn.innerHTML = '' + j;
                     virtualBtn.value = '';
                     virtualBtn.style = 'width: 100px;';
                     if (ganador === j) {
@@ -46,8 +56,11 @@
                             virtualBtn.style = 'background: green;width: 100px;';
                             virtualBtn.innerHTML = '';
                             virtualBtn.value = '';
-                            alert('Ganaste!!')
-                            this.shadowRoot.innerHTML = ''
+                            alert('Ganaste!!');
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1500);
+
                         }).bind(this));
                     } else {
                         virtualBtn.addEventListener('click', (function() {
@@ -64,7 +77,7 @@
 
             }
             this.contenido = contenido
-            this.shadowRoot.appendChild(contenido);
+            this.shadowRoott.appendChild(contenido);
 
         }
 
