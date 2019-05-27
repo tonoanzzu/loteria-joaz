@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <loteria-joaz casillas></loteria-joaz>
+    <loteria-joaz casillas regalos></loteria-joaz>
 </body>
 <script>
     class LoteriaGame extends HTMLElement {
@@ -23,9 +23,14 @@
             }
 
             let noCasillas
+            let regalos
 
             if (localStorage.getItem("casillas") === null) {
                 localStorage.setItem("casillas", 3);
+            }
+
+            if (localStorage.getItem("regalos") === null) {
+                localStorage.setItem("regalos", 3);
             }
 
             noCasillas = newVal === null || newVal === '' ? localStorage.getItem("casillas") : newVal
@@ -83,7 +88,7 @@
         }
 
         static get observedAttributes() {
-            return ['casillas'];
+            return ['casillas', 'regalos'];
         }
     }
 
