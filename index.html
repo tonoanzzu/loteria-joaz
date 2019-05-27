@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Loteria</title>
+</head>
+
+<body>
+    <loteria-joaz casillas=null></loteria-joaz>
+</body>
+<script>
+    class LoteriaGame extends HTMLElement {
+
+        connectedCallback() {
+            let shadowRoot = this.attachShadow({
+                mode: 'open'
+            });
+        }
+
+        disconnectedCallback() {
+            console.log('disconnected!');
+        }
+
+        attributeChangedCallback(name, oldVal, newVal) {
+
+            this.shadowRoot.innerHTML = ''
+                //declaracion del shadow root
+            let noCasillas = newVal;
+            let ganador
+            if (noCasillas > 1) {
+                ganador = Math.round(Math.random() * (noCasillas - 1) + 1);
+            } else {
+                ganador = 1
+            }
+
+            let botones = [];
+            let contenido = document.createElement('div');
+            contenido.style = 'display: flex; background: gray;width: ' + noCasillas + '00px;flex-wrap: wrap;';
+            if (noCasillas != null) {
+                for (let j = 1; j <= noCasillas; j++) {
+                    let virtualBtn = document.createElement('button');
+                    virtualBtn.innerHTML = '';
+                    virtualBtn.value = '';
+                    virtualBtn.style = 'width: 100px;';
+                    if (ganador === j) {
+                        virtualBtn.addEventListener('click', (function() {
+                            virtualBtn.style = 'background: green;width: 100px;';
+                            virtualBtn.innerHTML = '';
+                            virtualBtn.value = '';
+                            alert('Ganaste!!')
+                            this.shadowRoot.innerHTML = ''
+                        }).bind(this));
+                    } else {
+                        virtualBtn.addEventListener('click', (function() {
+                            virtualBtn.style = 'background: red;;width: 100px;';
+                            virtualBtn.innerHTML = '';
+                            virtualBtn.value = '';
+                        }).bind(this));
+
+                    }
+
+                    botones.push(virtualBtn);
+                    contenido.appendChild(virtualBtn);
+                }
+
+            }
+            this.contenido = contenido
+            this.shadowRoot.appendChild(contenido);
+
+        }
+
+        static get observedAttributes() {
+            return ['casillas'];
+        }
+    }
+
+    window.customElements.define('loteria-joaz', LoteriaGame);
+</script>
+
+</html>
