@@ -14,10 +14,6 @@
 <script>
     class LoteriaGame extends HTMLElement {
 
-        funcioncambio() {
-            console.log('Ejecutando')
-        }
-
         connectedCallback() {
 
             //declaracion del shadow root
@@ -27,12 +23,14 @@
                 });
             }
 
-            console.log(this.attributes[0].nodeValue)
-
         }
 
         attributeChangedCallback(name, oldVal, newVal) {
-            console.log('entrecua')
+            this.generateGame(name, oldVal, newVal);
+        }
+
+        generateGame(name, oldVal, newVal) {
+
             if (!this.shadowRoott) {
                 this.shadowRoott = this.attachShadow({
                     mode: 'open'
@@ -55,10 +53,17 @@
             console.log('casillas', noCasillas);
             console.log('regalos', regalos);
 
-
             this.shadowRoott.innerHTML = ''
             let ganadores = []
             let temp_ganador
+
+            if (noCasillas < regalos) {
+                alert('el numero de casillas es menor al numero de regalos, corrige esto')
+                location.reload();
+                return 0;
+            }
+
+
             if (noCasillas > 1) {
 
                 while (ganadores.length < regalos) {
@@ -67,7 +72,6 @@
                         ganadores.push(temp_ganador)
                     }
                 }
-
 
             } else {
                 ganador = 1
@@ -87,7 +91,6 @@
             input1.id = 'casillas'
             input1.value = noCasillas
 
-
             let labelinput2 = document.createElement('label');
             let textlabel2 = document.createTextNode("Regalos");
             labelinput2.setAttribute("for", "regalos");
@@ -97,6 +100,18 @@
             input2.id = 'regalos'
             input2.value = regalos
 
+            let btnCambio = document.createElement('button');
+
+
+            var t = document.createTextNode("Cambio");
+            btnCambio.appendChild(t);
+
+            btnCambio.addEventListener('click', () => {
+                this.setAttribute('casillas', input1.value);
+                this.setAttribute('regalos', input2.value);
+            });
+
+
 
             let init = document.createElement('div');
 
@@ -104,6 +119,7 @@
             init.appendChild(input1);
             init.appendChild(labelinput2);
             init.appendChild(input2);
+            init.appendChild(btnCambio);
 
             this.shadowRoott.appendChild(init);
 
@@ -120,10 +136,7 @@
                             virtualBtn.innerHTML = '';
                             virtualBtn.value = '';
                             alert('Ganaste!!');
-                            //alert('Reiniciando Juego!');
-                            /* setTimeout(function() {
-                                location.reload();
-                            }, 1500); */
+
                         }).bind(this));
                     } else {
                         virtualBtn.addEventListener('click', (function() {
