@@ -24,13 +24,10 @@
 
             let noCasillas
 
-            if (localStorage.getItem("casillas") === null) {
-                localStorage.setItem("casillas", 3);
+            if (name === 'casillas') {
+                noCasillas = newVal === null || newVal === '' ? 3 : newVal
             }
 
-            noCasillas = newVal === null || newVal === '' ? localStorage.getItem("casillas") : newVal
-
-            localStorage.setItem("casillas", noCasillas);
 
             this.shadowRoott.innerHTML = ''
 
