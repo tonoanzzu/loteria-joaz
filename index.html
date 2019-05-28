@@ -9,46 +9,104 @@
 </head>
 
 <body>
-    <loteria-joaz casillas regalos></loteria-joaz>
+    <loteria-joaz casillas="5" regalos="2"></loteria-joaz>
 </body>
 <script>
     class LoteriaGame extends HTMLElement {
 
-        attributeChangedCallback(name, oldVal, newVal) {
+        funcioncambio() {
+            console.log('Ejecutando')
+        }
 
+        connectedCallback() {
+
+            //declaracion del shadow root
             if (!this.shadowRoott) {
                 this.shadowRoott = this.attachShadow({
                     mode: 'open'
                 });
             }
 
-            let noCasillas
-            let regalos
+            console.log(this.attributes[0].nodeValue)
 
-            if (localStorage.getItem("casillas") === null) {
-                localStorage.setItem("casillas", 3);
+        }
+
+        attributeChangedCallback(name, oldVal, newVal) {
+            console.log('entrecua')
+            if (!this.shadowRoott) {
+                this.shadowRoott = this.attachShadow({
+                    mode: 'open'
+                });
+            }
+            //definicion de casillas
+            let noCasillas = this.attributes[0].nodeValue === null || this.attributes[0].nodeValue === '' || this.attributes[0].nodeValue === 'undefined' ? 3 : this.attributes[0].nodeValue;
+            //definicion de regalos
+            let regalos = this.attributes[1].nodeValue === null || this.attributes[1].nodeValue === '' || this.attributes[1].nodeValue === 'undefined' ? 1 : this.attributes[1].nodeValue;
+
+            if (name === 'casillas') {
+                console.log('entre a name==casillas');
+                noCasillas = newVal === null || newVal === '' ? this.attributes[0].nodeValue : newVal
             }
 
-            if (localStorage.getItem("regalos") === null) {
-                localStorage.setItem("regalos", 3);
+            if (name === 'regalos') {
+                console.log('entre a name==regalos');
+                regalos = newVal === null || newVal === '' ? this.attributes[1].nodeValue : newVal
             }
+            console.log('casillas', noCasillas);
+            console.log('regalos', regalos);
 
-            noCasillas = newVal === null || newVal === '' ? localStorage.getItem("casillas") : newVal
-
-            localStorage.setItem("casillas", noCasillas);
 
             this.shadowRoott.innerHTML = ''
-
-            let ganador
+            let ganadores = []
+            let temp_ganador
             if (noCasillas > 1) {
-                ganador = Math.round(Math.random() * (noCasillas - 1) + 1);
+
+                while (ganadores.length < regalos) {
+                    temp_ganador = Math.round(Math.random() * (noCasillas - 1) + 1);
+                    if (!ganadores.includes(temp_ganador)) {
+                        ganadores.push(temp_ganador)
+                    }
+                }
+
+
             } else {
                 ganador = 1
             }
-            console.log(ganador);
-
+            console.log('ganadores', ganadores);
             let botones = [];
+
             let contenido = document.createElement('div');
+
+            let labelinput1 = document.createElement('label');
+
+            let textlabel1 = document.createTextNode("Casillas");
+            labelinput1.setAttribute("for", "casillas");
+            labelinput1.appendChild(textlabel1)
+
+            let input1 = document.createElement('input');
+            input1.id = 'casillas'
+            input1.value = noCasillas
+
+
+            let labelinput2 = document.createElement('label');
+            let textlabel2 = document.createTextNode("Regalos");
+            labelinput2.setAttribute("for", "regalos");
+            labelinput2.appendChild(textlabel2)
+
+            let input2 = document.createElement('input');
+            input2.id = 'regalos'
+            input2.value = regalos
+
+
+            let init = document.createElement('div');
+
+            init.appendChild(labelinput1);
+            init.appendChild(input1);
+            init.appendChild(labelinput2);
+            init.appendChild(input2);
+
+            this.shadowRoott.appendChild(init);
+
             contenido.style = 'display: flex; background: gray;width: ' + noCasillas + '00px;flex-wrap: wrap;';
             if (noCasillas != null) {
                 for (let j = 1; j <= noCasillas; j++) {
@@ -56,17 +114,16 @@
                     virtualBtn.innerHTML = '' + j;
                     virtualBtn.value = '';
                     virtualBtn.style = 'width: 100px;';
-                    if (ganador === j) {
+                    if (ganadores.includes(j)) {
                         virtualBtn.addEventListener('click', (function() {
                             virtualBtn.style = 'background: green;width: 100px;';
                             virtualBtn.innerHTML = '';
                             virtualBtn.value = '';
                             alert('Ganaste!!');
-                            alert('Reiniciando Juego!');
-                            setTimeout(function() {
+                            //alert('Reiniciando Juego!');
+                            /* setTimeout(function() {
                                 location.reload();
-                            }, 1500);
-
+                            }, 1500); */
                         }).bind(this));
                     } else {
                         virtualBtn.addEventListener('click', (function() {
@@ -74,24 +131,18 @@
                             virtualBtn.innerHTML = '';
                             virtualBtn.value = '';
                         }).bind(this));
-
                     }
-
                     botones.push(virtualBtn);
                     contenido.appendChild(virtualBtn);
                 }
-
             }
             this.contenido = contenido
             this.shadowRoott.appendChild(contenido);
-
         }
-
         static get observedAttributes() {
             return ['casillas', 'regalos'];
         }
     }
-
     window.customElements.define('loteria-joaz', LoteriaGame);
 </script>
 
